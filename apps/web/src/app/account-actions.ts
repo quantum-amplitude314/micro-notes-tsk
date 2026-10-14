@@ -1,20 +1,21 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { redirect } from "@/i18n/navigation";
+import { toLocale } from "@/i18n/routing";
 import { apiClient, hasStatus } from "@/lib/api";
 import { clearSessionCookies, sendAuthRequest } from "@/lib/auth";
 
-export const signOut = async () => {
+export const signOut = async ({ locale }: { locale: string }) => {
   try {
     await sendAuthRequest({ endpoint: "sign-out", body: {} });
-  } finally {
-    await clearSessionCookies();
-  }
+  } catch {}
 
-  redirect("/login");
+  await clearSessionCookies();
+
+  return redirect({ href: "/login", locale: toLocale(locale) });
 };
 
-export const deleteAccount = async () => {
+export const deleteAccount = async ({ locale }: { locale: string }) => {
   try {
     await apiClient.account.delete();
   } catch (error) {
@@ -26,5 +27,6 @@ export const deleteAccount = async () => {
   }
 
   await clearSessionCookies();
-  redirect("/register");
+
+  return redirect({ href: "/register", locale: toLocale(locale) });
 };

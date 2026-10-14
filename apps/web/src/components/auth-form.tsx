@@ -1,29 +1,30 @@
 "use client";
 
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { type SubmitEvent, useState, useTransition } from "react";
 import { register, signIn } from "@/app/auth-actions";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/i18n/navigation";
 import {
   type AuthFormState,
   type AuthMode,
-  authErrorMessages,
   type Credentials,
-  credentialErrorMessages,
   credentialsSchema,
   getCredentialFieldErrors,
 } from "@/lib/auth-form";
 
 export function AuthForm({ mode }: { mode: AuthMode }) {
+  const t = useTranslations("auth");
+  const locale = useLocale();
   const isRegistration = mode === "register";
   const [credentials, setCredentials] = useState<Credentials>({ email: "", password: "" });
   const [feedback, setFeedback] = useState<AuthFormState>({});
   const [pending, startTransition] = useTransition();
   const { error, fieldErrors } = feedback;
-  const emailError = fieldErrors?.email && credentialErrorMessages[fieldErrors.email];
-  const passwordError = fieldErrors?.password && credentialErrorMessages[fieldErrors.password];
+  const emailError = fieldErrors?.email && t(`validation.${fieldErrors.email}`);
+  const passwordError = fieldErrors?.password && t(`validation.${fieldErrors.password}`);
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -33,7 +34,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
     startTransition(async () => {
       const send = isRegistration ? register : signIn;
-      setFeedback(await send({ credentials }));
+      setFeedback(await send({ credentials, locale }));
     });
   };
 
@@ -41,7 +42,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6" aria-busy={pending}>
       <FieldGroup>
         <Field data-invalid={!!emailError}>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
           <Input
             id="email"
             type="email"
@@ -56,7 +57,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           <FieldError id="email-error">{emailError}</FieldError>
         </Field>
         <Field data-invalid={!!passwordError}>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
           <Input
             id="password"
             type="password"
@@ -73,18 +74,21 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           <FieldError id="password-error">{passwordError}</FieldError>
         </Field>
       </FieldGroup>
-      <FieldError role="alert">{error && !pending ? authErrorMessages[error] : null}</FieldError>
+      <FieldError role="alert">{error && !pending ? t(`errors.${error}`) : null}</FieldError>
       <Button type="submit" size="lg" disabled={pending}>
-        {pending ? "Please wait…" : isRegistration ? "Create account" : "Sign in"}
+        {pending ? t("pending") : isRegistration ? t("createAccount") : t("signIn")}
       </Button>
       <p className="text-sm text-muted-foreground">
-        {isRegistration ? "Already have an account? " : "New here? "}
-        <Link
-          href={isRegistration ? "/login" : "/register"}
-          className="font-medium text-foreground underline underline-offset-4"
-        >
-          {isRegistration ? "Sign in" : "Create an account"}
-        </Link>
+        {t.rich(isRegistration ? "toSignIn" : "toRegister", {
+          link: (chunks) => (
+            <Link
+              href={isRegistration ? "/login" : "/register"}
+              className="font-medium text-foreground underline underline-offset-4"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
     </form>
   );

@@ -6,7 +6,9 @@ import {
   NOTE_TITLE_MAX_LENGTH,
   type NoteField,
   noteInputSchema,
+  PRIORITIES,
 } from "@notes/contracts";
+import { useLocale, useTranslations } from "next-intl";
 import { type SubmitEvent, useState, useTransition } from "react";
 import { createNote, updateNote } from "@/app/note-actions";
 import { Button } from "@/components/ui/button";
@@ -26,10 +28,7 @@ import {
   type NoteFormState,
   type NoteValues,
   type NoteView,
-  noteSaveErrorMessages,
-  noteValidationMessages,
 } from "@/lib/note-form";
-import { priorityOptions } from "@/lib/priority";
 
 const toNoteValues = ({ title, content, priority }: NoteView) => {
   const values: NoteValues = { title, content, priority };
@@ -38,17 +37,25 @@ const toNoteValues = ({ title, content, priority }: NoteView) => {
 };
 
 export function NoteForm({ note, onSaved }: { note?: NoteView; onSaved?: () => void }) {
+  const t = useTranslations("noteForm");
+  const tPriorities = useTranslations("priorities");
+  const locale = useLocale();
   const [values, setValues] = useState(note ? toNoteValues(note) : emptyNoteValues);
   const [feedback, setFeedback] = useState<NoteFormState>({});
   const [pending, startTransition] = useTransition();
   const idPrefix = note ? `note-${note.id}` : "new-note";
   const { error, fieldErrors } = feedback;
+  const priorityItems = PRIORITIES.map((value) => ({ value, label: tPriorities(value) }));
 
   const fieldError = (field: NoteField) => {
     const validationError = fieldErrors?.[field];
-    const message = validationError ? noteValidationMessages[validationError] : undefined;
+    if (!validationError) return undefined;
+    if (validationError === "titleTooLong")
+      return t("validation.titleTooLong", { max: NOTE_TITLE_MAX_LENGTH });
+    if (validationError === "contentTooLong")
+      return t("validation.contentTooLong", { max: NOTE_CONTENT_MAX_LENGTH });
 
-    return message;
+    return t(`validation.${validationError}`);
   };
   const titleError = fieldError("title");
   const contentError = fieldError("content");
@@ -71,8 +78,8 @@ export function NoteForm({ note, onSaved }: { note?: NoteView; onSaved?: () => v
 
     startTransition(async () => {
       const result = note
-        ? await updateNote({ id: note.id, values })
-        : await createNote({ values });
+        ? await updateNote({ id: note.id, values, locale })
+        : await createNote({ values, locale });
       setFeedback(result);
       if (!result.saved) return;
       if (!note) setValues(emptyNoteValues);
@@ -84,7 +91,7 @@ export function NoteForm({ note, onSaved }: { note?: NoteView; onSaved?: () => v
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5" aria-busy={pending}>
       <FieldGroup>
         <Field data-invalid={!!titleError}>
-          <FieldLabel htmlFor={`${idPrefix}-title`}>Title</FieldLabel>
+          <FieldLabel htmlFor={`${idPrefix}-title`}>{t("title")}</FieldLabel>
           <Input
             id={`${idPrefix}-title`}
             required
@@ -98,7 +105,7 @@ export function NoteForm({ note, onSaved }: { note?: NoteView; onSaved?: () => v
           <FieldError id={`${idPrefix}-title-error`}>{titleError}</FieldError>
         </Field>
         <Field data-invalid={!!contentError}>
-          <FieldLabel htmlFor={`${idPrefix}-content`}>Content</FieldLabel>
+          <FieldLabel htmlFor={`${idPrefix}-content`}>{t("content")}</FieldLabel>
           <Textarea
             id={`${idPrefix}-content`}
             rows={4}
@@ -112,9 +119,9 @@ export function NoteForm({ note, onSaved }: { note?: NoteView; onSaved?: () => v
           <FieldError id={`${idPrefix}-content-error`}>{contentError}</FieldError>
         </Field>
         <Field data-invalid={!!priorityError}>
-          <FieldLabel htmlFor={`${idPrefix}-priority`}>Priority</FieldLabel>
+          <FieldLabel htmlFor={`${idPrefix}-priority`}>{t("priority")}</FieldLabel>
           <Select
-            items={priorityOptions}
+            items={priorityItems}
             value={values.priority || null}
             disabled={pending}
             onValueChange={(next: string | null) =>
@@ -131,7 +138,7 @@ export function NoteForm({ note, onSaved }: { note?: NoteView; onSaved?: () => v
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {priorityOptions.map(({ value, label }) => (
+                {priorityItems.map(({ value, label }) => (
                   <SelectItem key={value} value={value}>
                     {label}
                   </SelectItem>
@@ -142,12 +149,10 @@ export function NoteForm({ note, onSaved }: { note?: NoteView; onSaved?: () => v
           <FieldError id={`${idPrefix}-priority-error`}>{priorityError}</FieldError>
         </Field>
       </FieldGroup>
-      <FieldError role="alert">
-        {error && !pending ? noteSaveErrorMessages[error] : null}
-      </FieldError>
+      <FieldError role="alert">{error && !pending ? t(`errors.${error}`) : null}</FieldError>
       <div className="flex justify-end">
         <Button type="submit" disabled={pending}>
-          {pending ? "Saving…" : note ? "Save changes" : "Add note"}
+          {pending ? t("saving") : note ? t("save") : t("add")}
         </Button>
       </div>
     </form>

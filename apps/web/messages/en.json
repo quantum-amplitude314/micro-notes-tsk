@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "title": "Micro Notes",
+    "description": "Write notes and sort them by priority."
+  },
+  "shell": {
+    "brand": "Micro Notes",
+    "credit": "Built by",
+    "language": "Language",
+    "loading": "Loading…"
+  },
+  "auth": {
+    "signInHeading": "Sign in",
+    "registerHeading": "Create an account",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "pending": "Please wait…",
+    "toRegister": "New here? <link>Create an account</link>",
+    "toSignIn": "Already have an account? <link>Sign in</link>",
+    "validation": {
+      "emailInvalid": "Enter a valid email address.",
+      "passwordTooShort": "Use at least 8 characters.",
+      "passwordTooLong": "Use at most 128 characters."
+    },
+    "errors": {
+      "signInFailed": "The email or password is incorrect.",
+      "registrationFailed": "The account could not be created. The email may already be registered.",
+      "tooManyAttempts": "Too many attempts. Please wait a moment and try again.",
+      "serviceUnavailable": "The service is unavailable. Please try again later."
+    }
+  },
+  "header": {
+    "myAccount": "My account",
+    "signingOut": "Signing out…",
+    "signOut": "Sign out",
+    "deleteAccount": "Delete account",
+    "deleteAccountTitle": "Delete your account?",
+    "deleteAccountDescription": "Your account and all of your notes will be deleted. This can’t be undone.",
+    "deleteAccountFailed": "The account could not be deleted. Please try again."
+  },
+  "notes": {
+    "heading": "Your notes",
+    "newNote": "New note",
+    "allNotes": "All notes",
+    "filteredHeading": "{priority} priority",
+    "filterLabel": "Filter notes by priority",
+    "all": "All",
+    "emptyAll": "You have no notes yet. Add your first one.",
+    "emptyFiltered": "No notes with {priority, select, low {low} medium {medium} high {high} other {this}} priority.",
+    "updated": "Updated <time>{date}</time>",
+    "edit": "Edit",
+    "editTitle": "Edit note",
+    "delete": "Delete",
+    "deleteTitle": "Delete this note?",
+    "deleteDescription": "“{title}” will be deleted. This can’t be undone.",
+    "deleteConfirm": "Delete note",
+    "deleteFailed": "The note could not be deleted. Please try again."
+  },
+  "noteForm": {
+    "title": "Title",
+    "content": "Content",
+    "priority": "Priority",
+    "add": "Add note",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "validation": {
+      "titleRequired": "Enter a title.",
+      "titleTooLong": "Use at most {max, number} characters.",
+      "contentTooLong": "Use at most {max, number} characters.",
+      "priorityRequired": "Choose a priority."
+    },
+    "errors": {
+      "notFound": "This note no longer exists.",
+      "saveFailed": "The note could not be saved. Please try again."
+    }
+  },
+  "priorities": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  },
+  "priorityBadge": "{priority} priority",
+  "dialog": {
+    "cancel": "Cancel",
+    "deleting": "Deleting…"
+  },
+  "errorPage": {
+    "heading": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "retry": "Try again",
+    "home": "Back to your notes",
+    "code": "Error code: {digest}",
+    "section": "This section could not be loaded."
+  },
+  "notFound": {
+    "heading": "Page not found",
+    "description": "The page you are looking for does not exist.",
+    "home": "Back to your notes"
+  }
+}

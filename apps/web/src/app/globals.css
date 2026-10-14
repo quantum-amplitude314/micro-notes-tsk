@@ -55,7 +55,7 @@
 }
 
 @utility page-shell {
-  width: min(48rem, calc(100% - var(--page-gutter) * 2));
+  width: min(72rem, calc(100% - var(--page-gutter) * 2));
   margin-inline: auto;
 }
 
@@ -109,5 +109,15 @@
   *::after {
     transition-duration: 0s;
     animation-duration: 0s;
+  }
+}
+
+.app-loader {
+  animation: app-loader-appear 0.2s ease-out 0.3s both;
+}
+
+@keyframes app-loader-appear {
+  from {
+    opacity: 0;
   }
 }

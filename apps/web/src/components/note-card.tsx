@@ -1,6 +1,8 @@
+import { useLocale, useTranslations } from "next-intl";
 import { deleteNote } from "@/app/note-actions";
-import { ConfirmDialogButton } from "@/components/confirm-dialog-button";
-import { EditNoteButton } from "@/components/edit-note-button";
+import { ConfirmDialogButton } from "@/components/confirm-dialog";
+import { NoteDialogButton } from "@/components/note-dialog-button";
+import { NoteUpdatedAt } from "@/components/note-updated-at";
 import { PriorityBadge } from "@/components/priority-badge";
 import {
   Card,
@@ -12,13 +14,13 @@ import {
 } from "@/components/ui/card";
 import type { NoteView } from "@/lib/note-form";
 
-const dateFormat = new Intl.DateTimeFormat("en", { dateStyle: "medium" });
-
 export function NoteCard({ note }: { note: NoteView }) {
+  const t = useTranslations("notes");
+  const locale = useLocale();
   const { id, title, content, priority, updatedAt } = note;
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="section-heading break-words">{title}</CardTitle>
         <CardAction>
@@ -30,19 +32,23 @@ export function NoteCard({ note }: { note: NoteView }) {
           <p className="whitespace-pre-wrap break-words">{content}</p>
         </CardContent>
       ) : null}
-      <CardFooter className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">
-          Updated <time dateTime={updatedAt}>{dateFormat.format(new Date(updatedAt))}</time>
-        </p>
-        <div className="flex gap-2">
-          <EditNoteButton note={note} />
+      <CardFooter className="mt-auto flex flex-wrap items-center justify-between gap-3">
+        <NoteUpdatedAt updatedAt={updatedAt} />
+        <div className="ml-auto flex gap-2">
           <ConfirmDialogButton
-            triggerLabel="Delete"
-            title="Delete this note?"
-            description={`"${title}" will be deleted. This can't be undone.`}
-            confirmLabel="Delete note"
-            failureMessage="The note could not be deleted. Please try again."
-            onConfirm={deleteNote.bind(null, { id })}
+            triggerLabel={t("delete")}
+            title={t("deleteTitle")}
+            description={t("deleteDescription", { title })}
+            confirmLabel={t("deleteConfirm")}
+            failureMessage={t("deleteFailed")}
+            onConfirm={deleteNote.bind(null, { id, locale })}
+          />
+          <NoteDialogButton
+            note={note}
+            label={t("edit")}
+            title={t("editTitle")}
+            variant="outline"
+            size="sm"
           />
         </div>
       </CardFooter>

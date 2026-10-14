@@ -2,6 +2,10 @@ packages:
   - apps/*
   - packages/*
 
+allowBuilds:
+  '@parcel/watcher': false
+  '@swc/core': false
+
 catalog:
   "@orpc/client": ^1.15.5
   "@orpc/contract": ^1.15.5

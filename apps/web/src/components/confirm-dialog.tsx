@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,26 +11,27 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { FieldError } from "@/components/ui/field";
 
-export function ConfirmDialogButton({
-  triggerLabel,
-  title,
-  description,
-  confirmLabel,
-  failureMessage,
-  onConfirm,
-}: {
-  triggerLabel: string;
+type ConfirmDialogContent = {
   title: string;
   description: string;
   confirmLabel: string;
   failureMessage: string;
   onConfirm: () => Promise<{ deleted: boolean } | undefined>;
-}) {
-  const [open, setOpen] = useState(false);
+};
+
+export function ConfirmDialog({
+  open,
+  onOpenChange,
+  title,
+  description,
+  confirmLabel,
+  failureMessage,
+  onConfirm,
+}: ConfirmDialogContent & { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const t = useTranslations("dialog");
   const [failed, setFailed] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -38,18 +40,17 @@ export function ConfirmDialogButton({
       const result = await onConfirm();
       const succeeded = result?.deleted ?? true;
       setFailed(!succeeded);
-      if (succeeded) setOpen(false);
+      if (succeeded) onOpenChange(false);
     });
 
   return (
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        setOpen(next);
+        onOpenChange(next);
         setFailed(false);
       }}
     >
-      <DialogTrigger render={<Button variant="outline" size="sm" />}>{triggerLabel}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -58,13 +59,29 @@ export function ConfirmDialogButton({
         <FieldError role="alert">{failed && !pending ? failureMessage : null}</FieldError>
         <DialogFooter>
           <DialogClose render={<Button type="button" variant="ghost" disabled={pending} />}>
-            Cancel
+            {t("cancel")}
           </DialogClose>
           <Button type="button" variant="destructive" disabled={pending} onClick={confirm}>
-            {pending ? "Deleting…" : confirmLabel}
+            {pending ? t("deleting") : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+export function ConfirmDialogButton({
+  triggerLabel,
+  ...content
+}: ConfirmDialogContent & { triggerLabel: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button type="button" variant="ghost" size="sm" onClick={() => setOpen(true)}>
+        {triggerLabel}
+      </Button>
+      <ConfirmDialog open={open} onOpenChange={setOpen} {...content} />
+    </>
   );
 }

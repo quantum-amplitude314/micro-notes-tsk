@@ -1,4 +1,4 @@
-# Notes
+# Micro Notes
 
 Write notes, update them and filter them by priority. Each user sees only their own notes.
 

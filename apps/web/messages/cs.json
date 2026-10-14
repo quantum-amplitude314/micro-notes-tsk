@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "title": "Micro Notes",
+    "description": "Pište poznámky a řaďte je podle priority."
+  },
+  "shell": {
+    "brand": "Micro Notes",
+    "credit": "Realizace:",
+    "language": "Jazyk",
+    "loading": "Načítání…"
+  },
+  "auth": {
+    "signInHeading": "Přihlášení",
+    "registerHeading": "Vytvoření účtu",
+    "email": "E-mail",
+    "password": "Heslo",
+    "signIn": "Přihlásit se",
+    "createAccount": "Vytvořit účet",
+    "pending": "Čekejte prosím…",
+    "toRegister": "Jste tu poprvé? <link>Vytvořte si účet</link>",
+    "toSignIn": "Už máte účet? <link>Přihlaste se</link>",
+    "validation": {
+      "emailInvalid": "Zadejte platnou e-mailovou adresu.",
+      "passwordTooShort": "Použijte alespoň 8 znaků.",
+      "passwordTooLong": "Použijte nejvýše 128 znaků."
+    },
+    "errors": {
+      "signInFailed": "E-mail nebo heslo není správné.",
+      "registrationFailed": "Účet se nepodařilo vytvořit. E-mail už může být registrovaný.",
+      "tooManyAttempts": "Příliš mnoho pokusů. Chvíli počkejte a zkuste to znovu.",
+      "serviceUnavailable": "Služba není dostupná. Zkuste to prosím později."
+    }
+  },
+  "header": {
+    "myAccount": "Můj účet",
+    "signingOut": "Odhlašování…",
+    "signOut": "Odhlásit se",
+    "deleteAccount": "Smazat účet",
+    "deleteAccountTitle": "Smazat váš účet?",
+    "deleteAccountDescription": "Váš účet i všechny vaše poznámky budou smazány. Tuto akci nelze vrátit.",
+    "deleteAccountFailed": "Účet se nepodařilo smazat. Zkuste to prosím znovu."
+  },
+  "notes": {
+    "heading": "Vaše poznámky",
+    "newNote": "Nová poznámka",
+    "allNotes": "Všechny poznámky",
+    "filteredHeading": "{priority} priorita",
+    "filterLabel": "Filtrovat poznámky podle priority",
+    "all": "Vše",
+    "emptyAll": "Zatím nemáte žádné poznámky. Přidejte první.",
+    "emptyFiltered": "Žádné poznámky s {priority, select, low {nízkou} medium {střední} high {vysokou} other {touto}} prioritou.",
+    "updated": "Upraveno <time>{date}</time>",
+    "edit": "Upravit",
+    "editTitle": "Upravit poznámku",
+    "delete": "Smazat",
+    "deleteTitle": "Smazat tuto poznámku?",
+    "deleteDescription": "Poznámka „{title}“ bude smazána. Tuto akci nelze vrátit.",
+    "deleteConfirm": "Smazat poznámku",
+    "deleteFailed": "Poznámku se nepodařilo smazat. Zkuste to prosím znovu."
+  },
+  "noteForm": {
+    "title": "Název",
+    "content": "Obsah",
+    "priority": "Priorita",
+    "add": "Přidat poznámku",
+    "save": "Uložit změny",
+    "saving": "Ukládání…",
+    "validation": {
+      "titleRequired": "Zadejte název.",
+      "titleTooLong": "Použijte nejvýše {max, number} znaků.",
+      "contentTooLong": "Použijte nejvýše {max, number} znaků.",
+      "priorityRequired": "Vyberte prioritu."
+    },
+    "errors": {
+      "notFound": "Tato poznámka už neexistuje.",
+      "saveFailed": "Poznámku se nepodařilo uložit. Zkuste to prosím znovu."
+    }
+  },
+  "priorities": {
+    "low": "Nízká",
+    "medium": "Střední",
+    "high": "Vysoká"
+  },
+  "priorityBadge": "{priority} priorita",
+  "dialog": {
+    "cancel": "Zrušit",
+    "deleting": "Mazání…"
+  },
+  "errorPage": {
+    "heading": "Něco se pokazilo",
+    "description": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
+    "retry": "Zkusit znovu",
+    "home": "Zpět na poznámky",
+    "code": "Kód chyby: {digest}",
+    "section": "Tuto část se nepodařilo načíst."
+  },
+  "notFound": {
+    "heading": "Stránka nenalezena",
+    "description": "Stránka, kterou hledáte, neexistuje.",
+    "home": "Zpět na poznámky"
+  }
+}

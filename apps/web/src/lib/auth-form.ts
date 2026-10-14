@@ -43,16 +43,3 @@ export const getCredentialFieldErrors = ({ issues }: z.ZodError) => {
 
   return fieldErrors;
 };
-
-export const credentialErrorMessages: Record<CredentialError, string> = {
-  emailInvalid: "Enter a valid email address.",
-  passwordTooShort: "Use at least 8 characters.",
-  passwordTooLong: "Use at most 128 characters.",
-};
-
-export const authErrorMessages: Record<AuthError, string> = {
-  signInFailed: "The email or password is incorrect.",
-  registrationFailed: "The account could not be created. The email may already be registered.",
-  tooManyAttempts: "Too many attempts. Please wait a moment and try again.",
-  serviceUnavailable: "The service is unavailable. Please try again later.",
-};

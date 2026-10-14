@@ -1,6 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { redirect } from "@/i18n/navigation";
+import { toLocale } from "@/i18n/routing";
 import { sendAuthRequest } from "@/lib/auth";
 import {
   type AuthError,
@@ -11,6 +12,8 @@ import {
   getCredentialFieldErrors,
 } from "@/lib/auth-form";
 
+type AuthRequest = { credentials: Credentials; locale: string };
+
 const readAuthError = ({ status, mode }: { status: number; mode: AuthMode }): AuthError => {
   if (status === 429) return "tooManyAttempts";
   if (status >= 500) return "serviceUnavailable";
@@ -18,13 +21,7 @@ const readAuthError = ({ status, mode }: { status: number; mode: AuthMode }): Au
   return mode === "register" ? "registrationFailed" : "signInFailed";
 };
 
-const authenticate = async ({
-  mode,
-  credentials,
-}: {
-  mode: AuthMode;
-  credentials: Credentials;
-}) => {
+const authenticate = async ({ mode, credentials, locale }: AuthRequest & { mode: AuthMode }) => {
   const parsed = credentialsSchema.safeParse(credentials);
   if (!parsed.success) {
     const invalid: AuthFormState = { fieldErrors: getCredentialFieldErrors(parsed.error) };
@@ -51,11 +48,10 @@ const authenticate = async ({
     return unavailable;
   }
 
-  redirect("/");
+  return redirect({ href: "/", locale: toLocale(locale) });
 };
 
-export const signIn = async ({ credentials }: { credentials: Credentials }) =>
-  authenticate({ mode: "signIn", credentials });
+export const signIn = async (request: AuthRequest) => authenticate({ ...request, mode: "signIn" });
 
-export const register = async ({ credentials }: { credentials: Credentials }) =>
-  authenticate({ mode: "register", credentials });
+export const register = async (request: AuthRequest) =>
+  authenticate({ ...request, mode: "register" });

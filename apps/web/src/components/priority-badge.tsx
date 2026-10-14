@@ -1,6 +1,6 @@
 import type { Priority } from "@notes/contracts";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
-import { priorityLabels } from "@/lib/priority";
 
 const priorityStyles: Record<Priority, string> = {
   high: "bg-primary text-primary-foreground",
@@ -9,5 +9,11 @@ const priorityStyles: Record<Priority, string> = {
 };
 
 export function PriorityBadge({ priority }: { priority: Priority }) {
-  return <Badge className={priorityStyles[priority]}>{priorityLabels[priority]} priority</Badge>;
+  const t = useTranslations();
+
+  return (
+    <Badge className={priorityStyles[priority]}>
+      {t("priorityBadge", { priority: t(`priorities.${priority}`) })}
+    </Badge>
+  );
 }
