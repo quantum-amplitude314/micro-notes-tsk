@@ -8,15 +8,20 @@
     "node": ">=24"
   },
   "scripts": {
+    "dev": "turbo run dev",
     "dev:api": "pnpm --filter @notes/api dev",
+    "dev:web": "pnpm --filter @notes/web dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
     "db:up": "podman compose up -d",
     "db:down": "podman compose down",
     "db:migrate": "pnpm --filter @notes/api db:migrate",
-    "lint-fix": "biome check --write .",
-    "typecheck": "pnpm -r typecheck",
-    "test": "pnpm --filter @notes/api test"
+    "lint-fix": "biome check --write ."
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "turbo": "^2.11.7",
     "typescript": "catalog:"
   }
 }
