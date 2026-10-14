@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { defineEntity, p } from "@mikro-orm/core";
 import { NOTE_TITLE_MAX_LENGTH, PRIORITIES } from "@notes/contracts";
 
-export const Note = defineEntity({
+export const NoteEntity = defineEntity({
   name: "Note",
   tableName: "notes",
   properties: {

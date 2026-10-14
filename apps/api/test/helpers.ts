@@ -3,7 +3,6 @@ import { randomUUID } from "node:crypto";
 import { prioritySchema } from "@notes/contracts";
 import { z } from "zod";
 import { type Api, createApi } from "../src/create-api.ts";
-import { Note } from "../src/db/note.entity.ts";
 import { readEnv } from "../src/env.ts";
 
 const env = readEnv();
@@ -168,19 +167,18 @@ export const seedNote = async ({
   ownerId: string;
   note: NoteFields;
 }) => {
-  const em = api.orm.em.fork();
   const { title, content, priority: rawPriority } = note;
   const priority = prioritySchema.parse(rawPriority);
-  const seeded = em.create(Note, { ownerId, title, content, priority });
-  await em.flush();
+  const seeded = await api
+    .createNoteRepository()
+    .create({ ownerId, note: { title, content, priority } });
   const storedNote = toStoredNote(seeded);
 
   return storedNote;
 };
 
 export const storedNotes = async ({ api, ownerId }: { api: Api; ownerId: string }) => {
-  const em = api.orm.em.fork();
-  const notes = await em.find(Note, { ownerId }, { orderBy: { createdAt: "asc" } });
+  const notes = await api.createNoteRepository().findOwned({ ownerId, filter: {} });
   const stored = notes.map(toStoredNote);
 
   return stored;

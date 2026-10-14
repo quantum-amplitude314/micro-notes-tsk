@@ -1,10 +1,10 @@
-import type { EntityManager } from "@mikro-orm/mariadb";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { ORPCError, onError } from "@orpc/server";
 import { Hono } from "hono";
-import type { Auth } from "../auth/auth.ts";
+import { createMiddleware } from "hono/factory";
+import type { Auth } from "../users/auth.ts";
 import { createRequireSession, type SessionVariables } from "./require-session.ts";
-import { router } from "./router.ts";
+import { type ApiContext, router } from "./router.ts";
 
 const handler = new OpenAPIHandler(router, {
   interceptors: [
@@ -17,8 +17,24 @@ const handler = new OpenAPIHandler(router, {
   ],
 });
 
-export const createApp = ({ auth, forkEm }: { auth: Auth; forkEm: () => EntityManager }) => {
+export const createApp = ({
+  auth,
+  createContext,
+}: {
+  auth: Auth;
+  createContext: () => Omit<ApiContext, "user">;
+}) => {
   const app = new Hono<{ Variables: SessionVariables }>();
+  const requireSession = createRequireSession({ auth });
+
+  const handleRpc = createMiddleware<{ Variables: SessionVariables }>(async (context, next) => {
+    const apiContext = { ...createContext(), user: context.get("user") };
+    const { matched, response } = await handler.handle(context.req.raw, { context: apiContext });
+
+    if (matched) return context.newResponse(response.body, response);
+
+    await next();
+  });
 
   app.get("/health", (context) => context.json({ status: "ok" }));
 
@@ -28,16 +44,8 @@ export const createApp = ({ auth, forkEm }: { auth: Auth; forkEm: () => EntityMa
     return auth.handler(context.req.raw);
   });
 
-  app.use("/notes/*", createRequireSession({ auth }));
-
-  app.use("/notes/*", async (context, next) => {
-    const apiContext = { em: forkEm(), user: context.get("user") };
-    const { matched, response } = await handler.handle(context.req.raw, { context: apiContext });
-
-    if (matched) return context.newResponse(response.body, response);
-
-    await next();
-  });
+  app.use("/notes/*", requireSession, handleRpc);
+  app.use("/account/*", requireSession, handleRpc);
 
   app.notFound((context) => context.json({ code: "NOT_FOUND", message: "Not found" }, 404));
 

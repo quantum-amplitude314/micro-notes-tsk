@@ -35,11 +35,10 @@ The backend is a separate package behind the contract. Any backend that implemen
 | Layer | Holds | Location |
 |---|---|---|
 | Domain | note rules as Zod schemas, shared with the web | `packages/contracts` |
-| Application | one use case per UC, including the ownership check | `apps/api/src/use-cases` |
-| Infrastructure | Hono and oRPC router, auth, MikroORM entities and migrations | `apps/api/src/http`, `src/auth`, `src/db` |
-| Composition root | wires the layers together | `apps/api/src/server.ts` |
-
-There are no ports: use cases call MikroORM's EntityManager directly.
+| Domain interfaces | `NoteRepository`, `UserRepository` | `apps/api/src/notes`, `apps/api/src/users` |
+| Use cases | business logic that crosses domains | `apps/api/src/use-cases` |
+| Adapters | MikroORM note repository, Better Auth user repository, Hono and oRPC router | `apps/api/src/notes`, `src/users`, `src/http` |
+| Composition root | wires the layers together | `apps/api/src/create-api.ts` |
 
 ## Testing
 

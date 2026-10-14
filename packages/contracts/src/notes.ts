@@ -33,6 +33,23 @@ export const noteInputSchema = z.object({
 });
 export type NoteInput = z.infer<typeof noteInputSchema>;
 
+const noteFieldSchema = z.enum(["title", "content", "priority"]);
+export type NoteField = z.infer<typeof noteFieldSchema>;
+export type NoteFieldErrors = Partial<Record<NoteField, NoteValidationError>>;
+
+export const getNoteFieldErrors = ({ issues }: z.ZodError) => {
+  const fieldErrors: NoteFieldErrors = {};
+
+  for (const { path, message } of issues) {
+    const field = noteFieldSchema.safeParse(path[0]);
+    const error = noteValidationErrorSchema.safeParse(message);
+    if (!field.success || !error.success) continue;
+    fieldErrors[field.data] ??= error.data;
+  }
+
+  return fieldErrors;
+};
+
 export const noteSchema = noteInputSchema.extend({
   id: noteIdSchema,
   createdAt: z.date(),

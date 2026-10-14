@@ -1,40 +1,44 @@
-import type { EntityManager } from "@mikro-orm/mariadb";
 import { contract } from "@notes/contracts";
 import { implement } from "@orpc/server";
-import { createNote } from "../use-cases/create-note.ts";
-import { deleteNote } from "../use-cases/delete-note.ts";
-import { listNotes } from "../use-cases/list-notes.ts";
-import { updateNote } from "../use-cases/update-note.ts";
-import type { SessionUser } from "./require-session.ts";
+import type { NoteRepository } from "../notes/note-repository.ts";
+import { deleteAccount } from "../use-cases/delete-account.ts";
+import type { User, UserRepository } from "../users/user-repository.ts";
 
-export type ApiContext = { em: EntityManager; user: SessionUser };
+export type ApiContext = { notes: NoteRepository; users: UserRepository; user: User };
 
 const os = implement(contract).$context<ApiContext>();
 
 export const router = os.router({
   notes: {
     list: os.notes.list.handler(({ context, input }) => {
-      const { em, user } = context;
+      const { notes, user } = context;
 
-      return listNotes({ em, ownerId: user.id, filter: input });
+      return notes.findOwned({ ownerId: user.id, filter: input });
     }),
     create: os.notes.create.handler(({ context, input }) => {
-      const { em, user } = context;
+      const { notes, user } = context;
 
-      return createNote({ em, ownerId: user.id, input });
+      return notes.create({ ownerId: user.id, note: input });
     }),
     update: os.notes.update.handler(async ({ context, input, errors }) => {
-      const { em, user } = context;
+      const { notes, user } = context;
       const { id, ...changes } = input;
-      const note = await updateNote({ em, ownerId: user.id, id, input: changes });
+      const note = await notes.updateOwned({ ownerId: user.id, id, changes });
       if (!note) throw errors.NOT_FOUND();
 
       return note;
     }),
     remove: os.notes.remove.handler(async ({ context, input, errors }) => {
-      const { em, user } = context;
+      const { notes, user } = context;
       const { id } = input;
-      const deleted = await deleteNote({ em, ownerId: user.id, id });
+      const deleted = await notes.deleteOwned({ ownerId: user.id, id });
+      if (!deleted) throw errors.NOT_FOUND();
+    }),
+  },
+  account: {
+    delete: os.account.delete.handler(async ({ context, errors }) => {
+      const { notes, users, user } = context;
+      const deleted = await deleteAccount({ users, notes, userId: user.id });
       if (!deleted) throw errors.NOT_FOUND();
     }),
   },

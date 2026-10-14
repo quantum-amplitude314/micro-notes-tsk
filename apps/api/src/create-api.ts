@@ -1,9 +1,10 @@
 import { createPool } from "mysql2/promise";
-import { createAuth } from "./auth/auth.ts";
 import { createOrm } from "./db/orm.ts";
 import type { Env } from "./env.ts";
 import { createApp } from "./http/app.ts";
-import { deleteOwnedNotes } from "./use-cases/delete-owned-notes.ts";
+import { MikroOrmNoteRepository } from "./notes/mikro-orm-note-repository.ts";
+import { createAuth } from "./users/auth.ts";
+import { BetterAuthUserRepository } from "./users/better-auth-user-repository.ts";
 
 export const createApi = async ({
   DATABASE_URL: databaseUrl,
@@ -13,21 +14,26 @@ export const createApi = async ({
 }: Env) => {
   const orm = await createOrm({ clientUrl: databaseUrl });
   const authPool = createPool({ uri: databaseUrl, timezone: "Z" });
-  const auth = createAuth({
-    pool: authPool,
-    secret: authSecret,
-    baseURL: apiUrl,
-    webOrigin,
-    beforeDeleteUser: ({ userId }) => deleteOwnedNotes({ em: orm.em.fork(), ownerId: userId }),
+  const auth = createAuth({ pool: authPool, secret: authSecret, baseURL: apiUrl, webOrigin });
+  const users = new BetterAuthUserRepository({ auth });
+
+  const createNoteRepository = () => new MikroOrmNoteRepository({ em: orm.em.fork() });
+
+  const app = createApp({
+    auth,
+    createContext: () => {
+      const context = { notes: createNoteRepository(), users };
+
+      return context;
+    },
   });
-  const app = createApp({ auth, forkEm: () => orm.em.fork() });
 
   const close = async () => {
     await orm.close();
     await authPool.end();
   };
 
-  const api = { fetch: app.fetch, auth, orm, close };
+  const api = { fetch: app.fetch, auth, orm, createNoteRepository, close };
 
   return api;
 };

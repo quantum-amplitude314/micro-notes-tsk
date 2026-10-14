@@ -15,7 +15,7 @@ after(async () => {
 
 describe("UC-5 Delete account", () => {
   test("precondition: rejects a user who is not signed in", async () => {
-    const response = await call({ api, path: "/auth/delete-user", method: "POST", body: {} });
+    const response = await call({ api, path: "/account", method: "DELETE" });
 
     assert.equal(response.status, 401);
   });
@@ -29,13 +29,12 @@ describe("UC-5 Delete account", () => {
 
     const response = await call({
       api,
-      path: "/auth/delete-user",
-      method: "POST",
-      body: {},
+      path: "/account",
+      method: "DELETE",
       cookie: user.cookie,
     });
 
-    assert.equal(response.status, 200);
+    assert.equal(response.status, 204);
     const listAfterDeletion = await call({ api, path: "/notes", cookie: user.cookie });
     assert.equal(listAfterDeletion.status, 401);
     const signIn = await call({

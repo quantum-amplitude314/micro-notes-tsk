@@ -1,8 +1,8 @@
 import { createMiddleware } from "hono/factory";
-import type { Auth } from "../auth/auth.ts";
+import type { Auth } from "../users/auth.ts";
+import type { User } from "../users/user-repository.ts";
 
-export type SessionUser = { id: string; email: string };
-export type SessionVariables = { user: SessionUser };
+export type SessionVariables = { user: User };
 
 export const createRequireSession = ({ auth }: { auth: Auth }) => {
   const requireSession = createMiddleware<{ Variables: SessionVariables }>(
