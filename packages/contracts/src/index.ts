@@ -12,6 +12,7 @@ export {
   type Note,
   type NoteFilter,
   type NoteInput,
+  type NoteValidationError,
   noteFilterSchema,
   noteIdSchema,
   noteInputSchema,

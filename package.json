@@ -8,6 +8,10 @@
     "node": ">=24"
   },
   "scripts": {
+    "dev:api": "pnpm --filter @notes/api dev",
+    "db:up": "podman compose up -d",
+    "db:down": "podman compose down",
+    "db:migrate": "pnpm --filter @notes/api db:migrate",
     "lint-fix": "biome check --write .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter @notes/api test"

@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
+import { prioritySchema } from "@notes/contracts";
 import { z } from "zod";
 import { type Api, createApi } from "../src/create-api.ts";
-import { notImplemented } from "../src/not-implemented.ts";
+import { Note } from "../src/db/note.entity.ts";
+import { readEnv } from "../src/env.ts";
 
-const baseUrl = "http://localhost:3001";
-const webOrigin = "http://localhost:3000";
+const env = readEnv();
+const { API_URL: baseUrl, WEB_ORIGIN: webOrigin } = env;
 const password = "correct-horse-battery";
 
 export type NoteFields = { title: string; content: string; priority: string };
@@ -51,7 +53,7 @@ export const invalidNotes = [
   },
 ];
 
-export const startApi = () => createApi();
+export const startApi = () => createApi(env);
 
 export const call = async ({
   api,
@@ -151,11 +153,35 @@ export const readFirstErrorPerField = async (response: Response) => {
   return fieldErrors;
 };
 
-export const seedNote = async (_: {
+const toStoredNote = ({ id, title, content, priority, createdAt, updatedAt }: StoredNote) => {
+  const storedNote = { id, title, content, priority, createdAt, updatedAt };
+
+  return storedNote;
+};
+
+export const seedNote = async ({
+  api,
+  ownerId,
+  note,
+}: {
   api: Api;
   ownerId: string;
   note: NoteFields;
-}): Promise<StoredNote> => notImplemented();
+}) => {
+  const em = api.orm.em.fork();
+  const { title, content, priority: rawPriority } = note;
+  const priority = prioritySchema.parse(rawPriority);
+  const seeded = em.create(Note, { ownerId, title, content, priority });
+  await em.flush();
+  const storedNote = toStoredNote(seeded);
 
-export const storedNotes = async (_: { api: Api; ownerId: string }): Promise<StoredNote[]> =>
-  notImplemented();
+  return storedNote;
+};
+
+export const storedNotes = async ({ api, ownerId }: { api: Api; ownerId: string }) => {
+  const em = api.orm.em.fork();
+  const notes = await em.find(Note, { ownerId }, { orderBy: { createdAt: "asc" } });
+  const stored = notes.map(toStoredNote);
+
+  return stored;
+};

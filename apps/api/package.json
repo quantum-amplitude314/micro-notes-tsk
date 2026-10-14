@@ -4,12 +4,27 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test 'test/**/*.test.ts'",
+    "dev": "node --watch --env-file=.env.development src/server.ts",
+    "db:migrate": "node --env-file=.env.development scripts/migrate.ts",
+    "db:migration:create": "node --env-file=.env.development scripts/create-migration.ts",
+    "test": "node --env-file=.env.test scripts/migrate.ts && node --env-file=.env.test --test 'test/**/*.test.ts'",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "@mikro-orm/core": "^7.2.5",
+    "@mikro-orm/mariadb": "^7.2.5",
+    "@mikro-orm/migrations": "^7.2.5",
+    "@notes/contracts": "workspace:*",
+    "@orpc/openapi": "catalog:",
+    "@orpc/server": "catalog:",
+    "better-auth": "^1.7.7",
+    "hono": "^4.13.13",
+    "mysql2": "^3.24.4",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "zod": "catalog:"
+    "typescript": "catalog:"
   }
 }

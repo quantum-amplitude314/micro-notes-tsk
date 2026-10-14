@@ -10,10 +10,26 @@ export const NOTE_CONTENT_MAX_LENGTH = 10_000;
 
 export const noteIdSchema = z.uuid();
 
+const noteValidationErrorSchema = z.enum([
+  "titleRequired",
+  "titleTooLong",
+  "contentTooLong",
+  "priorityRequired",
+]);
+export type NoteValidationError = z.infer<typeof noteValidationErrorSchema>;
+const { enum: validationErrors } = noteValidationErrorSchema;
+
 export const noteInputSchema = z.object({
-  title: z.string(),
-  content: z.string(),
-  priority: prioritySchema,
+  title: z
+    .string({ error: validationErrors.titleRequired })
+    .trim()
+    .min(1, { error: validationErrors.titleRequired })
+    .max(NOTE_TITLE_MAX_LENGTH, { error: validationErrors.titleTooLong }),
+  content: z
+    .string()
+    .trim()
+    .max(NOTE_CONTENT_MAX_LENGTH, { error: validationErrors.contentTooLong }),
+  priority: z.enum(PRIORITIES, { error: validationErrors.priorityRequired }),
 });
 export type NoteInput = z.infer<typeof noteInputSchema>;
 
