@@ -1,11 +1,10 @@
 {
   "metadata": {
     "title": "Micro Notes",
-    "description": "Pište poznámky a řaďte je podle priority."
+    "description": "Pište poznámky a filtrujte je podle priority."
   },
   "shell": {
     "brand": "Micro Notes",
-    "credit": "Realizace:",
     "language": "Jazyk",
     "loading": "Načítání…"
   },
@@ -21,8 +20,8 @@
     "toSignIn": "Už máte účet? <link>Přihlaste se</link>",
     "validation": {
       "emailInvalid": "Zadejte platnou e-mailovou adresu.",
-      "passwordTooShort": "Použijte alespoň 8 znaků.",
-      "passwordTooLong": "Použijte nejvýše 128 znaků."
+      "passwordTooShort": "Použijte alespoň {min, number} znaků.",
+      "passwordTooLong": "Použijte nejvýše {max, number} znaků."
     },
     "errors": {
       "signInFailed": "E-mail nebo heslo není správné.",

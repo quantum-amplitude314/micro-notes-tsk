@@ -1,3 +1,4 @@
+import { Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { deleteNote } from "@/app/note-actions";
 import { ConfirmDialogButton } from "@/components/confirm-dialog";
@@ -32,11 +33,12 @@ export function NoteCard({ note }: { note: NoteView }) {
           <p className="whitespace-pre-wrap break-words">{content}</p>
         </CardContent>
       ) : null}
-      <CardFooter className="mt-auto flex flex-wrap items-center justify-between gap-3">
+      <CardFooter className="mt-auto flex items-center justify-between gap-3">
         <NoteUpdatedAt updatedAt={updatedAt} />
-        <div className="ml-auto flex gap-2">
+        <div className="flex shrink-0 gap-1">
           <ConfirmDialogButton
             triggerLabel={t("delete")}
+            triggerIcon={<Trash2 aria-hidden="true" />}
             title={t("deleteTitle")}
             description={t("deleteDescription", { title })}
             confirmLabel={t("deleteConfirm")}
@@ -48,7 +50,7 @@ export function NoteCard({ note }: { note: NoteView }) {
             label={t("edit")}
             title={t("editTitle")}
             variant="outline"
-            size="sm"
+            size="icon-sm"
           />
         </div>
       </CardFooter>

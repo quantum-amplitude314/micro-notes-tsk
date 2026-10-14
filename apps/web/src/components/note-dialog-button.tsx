@@ -1,7 +1,7 @@
 "use client";
 
 import type { VariantProps } from "class-variance-authority";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import { useState } from "react";
 import { NoteForm } from "@/components/note-form";
 import { Button, type buttonVariants } from "@/components/ui/button";
@@ -29,10 +29,18 @@ export function NoteDialogButton({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant={variant} size={size} />}>
-        {note ? null : <Plus aria-hidden="true" />}
-        {label}
-      </DialogTrigger>
+      {note ? (
+        <DialogTrigger
+          render={<Button variant={variant} size={size} aria-label={label} title={label} />}
+        >
+          <Pencil aria-hidden="true" />
+        </DialogTrigger>
+      ) : (
+        <DialogTrigger render={<Button variant={variant} size={size} />}>
+          <Plus aria-hidden="true" />
+          {label}
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

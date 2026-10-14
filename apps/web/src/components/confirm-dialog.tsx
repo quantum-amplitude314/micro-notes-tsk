@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState, useTransition } from "react";
+import { type ReactNode, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -72,14 +72,22 @@ export function ConfirmDialog({
 
 export function ConfirmDialogButton({
   triggerLabel,
+  triggerIcon,
   ...content
-}: ConfirmDialogContent & { triggerLabel: string }) {
+}: ConfirmDialogContent & { triggerLabel: string; triggerIcon: ReactNode }) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Button type="button" variant="ghost" size="sm" onClick={() => setOpen(true)}>
-        {triggerLabel}
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        aria-label={triggerLabel}
+        title={triggerLabel}
+        onClick={() => setOpen(true)}
+      >
+        {triggerIcon}
       </Button>
       <ConfirmDialog open={open} onOpenChange={setOpen} {...content} />
     </>

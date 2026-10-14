@@ -1,9 +1,8 @@
-import { createPool } from "mysql2/promise";
 import { createOrm } from "./db/orm.ts";
 import type { Env } from "./env.ts";
 import { createApp } from "./http/app.ts";
 import { MikroOrmNoteRepository } from "./notes/mikro-orm-note-repository.ts";
-import { createAuth } from "./users/auth.ts";
+import { createAuth, createAuthPool } from "./users/auth.ts";
 import { BetterAuthUserRepository } from "./users/better-auth-user-repository.ts";
 
 export const createApi = async ({
@@ -13,7 +12,7 @@ export const createApi = async ({
   BETTER_AUTH_SECRET: authSecret,
 }: Env) => {
   const orm = await createOrm({ clientUrl: databaseUrl });
-  const authPool = createPool({ uri: databaseUrl, timezone: "Z" });
+  const authPool = createAuthPool({ databaseUrl });
   const auth = createAuth({ pool: authPool, secret: authSecret, baseURL: apiUrl, webOrigin });
   const users = new BetterAuthUserRepository({ auth });
 
@@ -33,7 +32,7 @@ export const createApi = async ({
     await authPool.end();
   };
 
-  const api = { fetch: app.fetch, auth, orm, createNoteRepository, close };
+  const api = { fetch: app.fetch, createNoteRepository, close };
 
   return api;
 };

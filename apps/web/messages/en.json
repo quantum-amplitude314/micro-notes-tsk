@@ -1,11 +1,10 @@
 {
   "metadata": {
     "title": "Micro Notes",
-    "description": "Write notes and sort them by priority."
+    "description": "Write notes and filter them by priority."
   },
   "shell": {
     "brand": "Micro Notes",
-    "credit": "Built by",
     "language": "Language",
     "loading": "Loading…"
   },
@@ -21,8 +20,8 @@
     "toSignIn": "Already have an account? <link>Sign in</link>",
     "validation": {
       "emailInvalid": "Enter a valid email address.",
-      "passwordTooShort": "Use at least 8 characters.",
-      "passwordTooLong": "Use at most 128 characters."
+      "passwordTooShort": "Use at least {min, number} characters.",
+      "passwordTooLong": "Use at most {max, number} characters."
     },
     "errors": {
       "signInFailed": "The email or password is incorrect.",

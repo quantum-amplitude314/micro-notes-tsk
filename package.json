@@ -1,7 +1,8 @@
 {
-  "name": "notes-taker",
+  "name": "micro-notes",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@12.11.2",
   "engines": {
@@ -14,7 +15,7 @@
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "db:up": "podman compose up -d",
+    "db:up": "podman compose up -d --wait",
     "db:down": "podman compose down",
     "db:migrate": "pnpm --filter @notes/api db:migrate",
     "lint-fix": "biome check --write ."

@@ -1,5 +1,6 @@
 "use client";
 
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@notes/contracts";
 import { useLocale, useTranslations } from "next-intl";
 import { type SubmitEvent, useState, useTransition } from "react";
 import { register, signIn } from "@/app/auth-actions";
@@ -10,6 +11,7 @@ import { Link } from "@/i18n/navigation";
 import {
   type AuthFormState,
   type AuthMode,
+  type CredentialField,
   type Credentials,
   credentialsSchema,
   getCredentialFieldErrors,
@@ -23,8 +25,19 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   const [feedback, setFeedback] = useState<AuthFormState>({});
   const [pending, startTransition] = useTransition();
   const { error, fieldErrors } = feedback;
-  const emailError = fieldErrors?.email && t(`validation.${fieldErrors.email}`);
-  const passwordError = fieldErrors?.password && t(`validation.${fieldErrors.password}`);
+
+  const fieldError = (field: CredentialField) => {
+    const validationError = fieldErrors?.[field];
+    if (!validationError) return undefined;
+    if (validationError === "passwordTooShort")
+      return t("validation.passwordTooShort", { min: PASSWORD_MIN_LENGTH });
+    if (validationError === "passwordTooLong")
+      return t("validation.passwordTooLong", { max: PASSWORD_MAX_LENGTH });
+
+    return t(`validation.${validationError}`);
+  };
+  const emailError = fieldError("email");
+  const passwordError = fieldError("password");
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -63,8 +76,8 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             type="password"
             autoComplete={isRegistration ? "new-password" : "current-password"}
             required
-            minLength={8}
-            maxLength={128}
+            minLength={PASSWORD_MIN_LENGTH}
+            maxLength={PASSWORD_MAX_LENGTH}
             value={credentials.password}
             readOnly={pending}
             onChange={(event) => setCredentials({ ...credentials, password: event.target.value })}

@@ -1,3 +1,4 @@
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@notes/contracts";
 import { z } from "zod";
 
 const credentialErrorSchema = z.enum(["emailInvalid", "passwordTooShort", "passwordTooLong"]);
@@ -5,7 +6,7 @@ type CredentialError = z.infer<typeof credentialErrorSchema>;
 const { enum: credentialErrors } = credentialErrorSchema;
 
 const credentialFieldSchema = z.enum(["email", "password"]);
-type CredentialField = z.infer<typeof credentialFieldSchema>;
+export type CredentialField = z.infer<typeof credentialFieldSchema>;
 export type CredentialFieldErrors = Partial<Record<CredentialField, CredentialError>>;
 
 export const credentialsSchema = z.object({
@@ -15,11 +16,11 @@ export const credentialsSchema = z.object({
     .pipe(z.email({ error: credentialErrors.emailInvalid })),
   password: z
     .string({ error: credentialErrors.passwordTooShort })
-    .min(8, { error: credentialErrors.passwordTooShort })
-    .max(128, { error: credentialErrors.passwordTooLong }),
+    .min(PASSWORD_MIN_LENGTH, { error: credentialErrors.passwordTooShort })
+    .max(PASSWORD_MAX_LENGTH, { error: credentialErrors.passwordTooLong }),
 });
 
-export type Credentials = { email: string; password: string };
+export type Credentials = z.input<typeof credentialsSchema>;
 
 export type AuthMode = "signIn" | "register";
 

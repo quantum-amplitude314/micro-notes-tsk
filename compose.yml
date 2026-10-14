@@ -7,6 +7,11 @@ services:
       MARIADB_DATABASE: notes
       MARIADB_USER: notes
       MARIADB_PASSWORD: notes
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
     ports:
       - "3306:3306"
     volumes:

@@ -8,6 +8,7 @@ export const contract = {
 
 export type Contract = typeof contract;
 
+export { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "./account.ts";
 export {
   getNoteFieldErrors,
   NOTE_CONTENT_MAX_LENGTH,

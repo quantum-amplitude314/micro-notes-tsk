@@ -12,7 +12,7 @@ export const createOrm = async ({ clientUrl }: { clientUrl: string }) => {
     timezone: "+00:00",
     entities: [NoteEntity],
     extensions: [Migrator],
-    migrations: { path: migrationsPath, glob: "!(*.d).ts", emit: "ts" },
+    migrations: { path: migrationsPath, glob: "!(*.d).ts", emit: "ts", snapshotName: ".snapshot" },
     schemaGenerator: { skipTables: authTables },
   });
 
